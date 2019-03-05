@@ -51,9 +51,12 @@ model.save('my_model.h5')
 score = model.evaluate(x_train, y_train)
 train_acc = np.sum(score)/len(score)
 train_score = score[:]
+print(score[1])
 score = model.evaluate(x_test, y_test)
 test_acc = np.sum(score)/len(score)
+print(np.sum(score), " debug ", len(score))
 test_score = score[:]
+print(score[1])
 
 
 print("train score: ",train_acc)
@@ -61,15 +64,15 @@ print("test score: ",test_acc)
 
 plt.plot(train_history.history['loss'])
 plt.plot(train_history.history['val_loss'])
-plt.plot(train_score)
-plt.plot(test_score)
+# plt.plot(train_score)
+# plt.plot(test_score)
 
 
 plt.title('Train History')
 plt.ylabel('loss')
 plt.xlabel('Epoch')
-plt.legend(['loss', 'val_loss', 'train accuracy', 'test accuracy'],
-           loc='upper left right bottom')
+plt.legend(['loss', 'val_loss'],
+           loc='upper left')
 plt.show()
 
 del model
