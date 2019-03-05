@@ -3,7 +3,7 @@ from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 from keras.optimizers import Adam
-from keras.callbacks import Callback
+from keras.callbacks import Callback, History
 import matplotlib.pyplot as plt
 import numpy as np
 # load data and pre
@@ -38,9 +38,9 @@ def build_model():
 def train_model(model):
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer="adam", metrics=['accuracy'])
-    train_history = model.fit(
-        x_train, y_train, batch_size=800, validation_split=0.2, epochs=5, callbacks=[TestCallback((x_test, y_test))])
+                  optimizer="adam", metrics=['accuracy','acc'])
+    train_history = model.fit(x_train, y_train, batch_size=800, validation_split=0.2,
+                              epochs=10, callbacks=[TestCallback((x_test, y_test))])
     return train_history
 
 
@@ -52,7 +52,9 @@ class TestCallback(Callback):
         global test_history
         x, y = self.test_data
         loss, acc, val_loss = self.model.evaluate(x, y, verbose=0)
+        # print("\n\n\n",self.model.evaluate(x, y, verbose=0),"\n\n\n")
         # print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+        print("test ",acc)
         test_history['loss'].append(loss)
         test_history['acc'].append(acc)
         test_history['val_loss'].append(val_loss)
@@ -68,8 +70,8 @@ train_history = train_model(model)
 
 model.save('my_model.h5')
 
-score = model.evaluate(x_train, y_train)
-score = model.evaluate(x_test, y_test)
+# score = model.evaluate(x_train, y_train)
+# score = model.evaluate(x_test, y_test)
 # test_acc = np.sum(score)/len(score)
 # print(np.sum(score), " debug ", len(score))
 # test_score = score[:]
@@ -78,18 +80,31 @@ score = model.evaluate(x_test, y_test)
 
 # print("train score: ",train_acc)
 # print("test score: ",test_acc)
-print(train_history.history," testing ")
-plt.plot(train_history.history['loss'])
-plt.plot(train_history.history['val_loss'])
+# print(train_history.history," testing ")
+# plt.plot(train_history.history['loss'])
+plt.plot(train_history.history['acc'])
+plt.plot(test_history['acc'])
+
 # plt.plot(train_score)
 # plt.plot(test_score)
 
 
 plt.title('Train History')
-plt.ylabel('loss')
+plt.ylabel('acc')
 plt.xlabel('Epoch')
-# plt.axis([0, 10, 1, 20])
-plt.legend(['loss', 'val_loss'],
+plt.axis([0, 10, 0, 2])
+plt.legend(['train acc', 'test acc'],
+           loc='upper left')
+plt.show()
+
+plt.plot(train_history.history['val_loss'])
+plt.plot(test_history['val_loss'])
+
+plt.title('Train History')
+plt.ylabel('val loss')
+plt.xlabel('Epoch')
+plt.axis([0, 10, 0, 2])
+plt.legend(['train val loss', 'test val loss'],
            loc='upper left')
 plt.show()
 
