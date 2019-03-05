@@ -39,7 +39,7 @@ def train_model(model):
     model.compile(loss='categorical_crossentropy',
                   optimizer="adam", metrics=['accuracy'])
     train_history = model.fit(
-        x_train, y_train, batch_size=800, validation_split=0.2, epochs=10, verbose=2)
+        x_train, y_train, batch_size=800, validation_split=0.2, epochs=5, verbose=2)
     return train_history
 
 (x_train, y_train), (x_test, y_test) = load_data()
@@ -49,19 +49,16 @@ train_history = train_model(model)
 model.save('my_model.h5')
 
 score = model.evaluate(x_train, y_train)
-train_acc = np.sum(score)/len(score)
-train_score = score[:]
-print(score[1])
 score = model.evaluate(x_test, y_test)
-test_acc = np.sum(score)/len(score)
-print(np.sum(score), " debug ", len(score))
-test_score = score[:]
-print(score[1])
+# test_acc = np.sum(score)/len(score)
+# print(np.sum(score), " debug ", len(score))
+# test_score = score[:]
+# print(score[1])
 
 
-print("train score: ",train_acc)
-print("test score: ",test_acc)
-
+# print("train score: ",train_acc)
+# print("test score: ",test_acc)
+print(train_history.history," testing ")
 plt.plot(train_history.history['loss'])
 plt.plot(train_history.history['val_loss'])
 # plt.plot(train_score)
@@ -71,6 +68,7 @@ plt.plot(train_history.history['val_loss'])
 plt.title('Train History')
 plt.ylabel('loss')
 plt.xlabel('Epoch')
+# plt.axis([0, 10, 1, 20])
 plt.legend(['loss', 'val_loss'],
            loc='upper left')
 plt.show()
