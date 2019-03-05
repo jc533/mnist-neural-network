@@ -3,6 +3,7 @@ from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation
 from keras.optimizers import Adam
+from keras.callbacks import Callback
 import matplotlib.pyplot as plt
 import numpy as np
 # load data and pre
@@ -39,11 +40,30 @@ def train_model(model):
     model.compile(loss='categorical_crossentropy',
                   optimizer="adam", metrics=['accuracy'])
     train_history = model.fit(
-        x_train, y_train, batch_size=800, validation_split=0.2, epochs=5, verbose=2)
+        x_train, y_train, batch_size=800, validation_split=0.2, epochs=5, callbacks=[TestCallback((x_test, y_test))])
     return train_history
+
+
+class TestCallback(Callback):
+    def __init__(self, test_data):
+        self.test_data = test_data
+
+    def on_epoch_end(self, epoch, logs={}):
+        global test_history
+        x, y = self.test_data
+        loss, acc, val_loss = self.model.evaluate(x, y, verbose=0)
+        # print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+        test_history['loss'].append(loss)
+        test_history['acc'].append(acc)
+        test_history['val_loss'].append(val_loss)
+
+
+
+
 
 (x_train, y_train), (x_test, y_test) = load_data()
 model = build_model()
+test_history = {"acc":[],"loss":[],"val_loss":[]}
 train_history = train_model(model)
 
 model.save('my_model.h5')
