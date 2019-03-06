@@ -109,13 +109,3 @@ plt.legend(['train val loss', 'test val loss'],
 plt.show()
 
 del model
-
-
-
-
-
-
-
-
-#並且用資料視覺化函式 庫繪出訓練過程中，
-#在訓練集和測試集的正確率和損失函數值
